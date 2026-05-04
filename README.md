@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://github.com/TheEvalon/vmware-vcenter-mcp/actions/workflows/ci.yml"><img src="https://github.com/TheEvalon/vmware-vcenter-mcp/actions/workflows/ci.yml/badge.svg" alt="CI"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"/></a>
-  <img src="https://img.shields.io/badge/node-%3E%3D20-brightgreen.svg" alt="Node >= 20"/>
+  <img src="https://img.shields.io/badge/node-%3E%3D22-brightgreen.svg" alt="Node >= 22"/>
   <img src="https://img.shields.io/badge/MCP-compatible-7c3aed.svg" alt="MCP compatible"/>
   <img src="https://img.shields.io/badge/vCenter-8.0-1f8ff5.svg" alt="vCenter 8.0"/>
 </p>

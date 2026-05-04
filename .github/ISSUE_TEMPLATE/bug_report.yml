@@ -35,7 +35,7 @@ body:
     id: node_version
     attributes:
       label: Node.js version
-      placeholder: "v20.18.0"
+      placeholder: "v22.10.0"
     validations:
       required: true
 

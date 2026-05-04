@@ -8,7 +8,9 @@ proposals.
 
 Requirements:
 
-- Node.js >= 20 (a `.nvmrc` is provided; run `nvm use`).
+- Node.js >= 22 (a `.nvmrc` is provided; run `nvm use`). Node 20 is not
+  supported because `undici@8` requires WHATWG WebIDL helpers that only
+  ship in Node 22+.
 - A reachable vCenter Server 8.0 only if you intend to run the integration
   suite. Unit tests do not need vCenter.
 

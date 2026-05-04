@@ -38,7 +38,7 @@
     "prepublishOnly": "npm run typecheck && npm run build && npm run test:integration:readonly"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "keywords": [
     "mcp",
