@@ -1,0 +1,40 @@
+name: Feature request
+description: Suggest a new tool, option, or improvement.
+title: "[feat] "
+labels: ["enhancement", "triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to achieve that the current MCP cannot do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: |
+        Tool name, suggested arguments, expected output. If the operation is
+        destructive, note that it must go through the dry-run / confirm
+        safety layer.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: SOAP escape hatch (`soap_runCommand`)? Existing tool combo?
+
+  - type: input
+    id: vcenter_version
+    attributes:
+      label: Minimum vCenter version this needs
+      placeholder: "8.0 GA / 8.0 U1 / any"
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context

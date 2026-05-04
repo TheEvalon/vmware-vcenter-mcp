@@ -1,0 +1,70 @@
+{
+  "name": "vmware-vcenter-mcp",
+  "version": "1.0.0",
+  "description": "Model Context Protocol server for VMware vCenter 8.0 management.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "vmware-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    ".env.example",
+    "assets/logo.svg",
+    "assets/logo-256.png",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheEvalon/vmware-vcenter-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TheEvalon/vmware-vcenter-mcp/issues",
+    "email": "info@iOblako.com"
+  },
+  "homepage": "https://github.com/TheEvalon/vmware-vcenter-mcp#readme",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "cross-env VCENTER_INTEGRATION=true vitest run tests/integration",
+    "test:integration:readonly": "cross-env VCENTER_INTEGRATION=true VCENTER_READ_ONLY=true vitest run tests/integration",
+    "typecheck": "tsc --noEmit",
+    "typecheck:tests": "tsc --noEmit -p tsconfig.test.json",
+    "clean": "rimraf dist",
+    "prepublishOnly": "npm run typecheck && npm run build && npm run test:integration:readonly"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "vmware",
+    "vcenter",
+    "vsphere",
+    "automation"
+  ],
+  "author": "Gregory (iOblako) <info@iOblako.com> (https://iOblako.com)",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@vates/node-vsphere-soap": "^2.1.3",
+    "dotenv": "^17.4.2",
+    "lodash": "^4.18.1",
+    "undici": "^8.1.0",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.24",
+    "@types/node": "^25.6.0",
+    "cross-env": "^7.0.3",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.5"
+  }
+}

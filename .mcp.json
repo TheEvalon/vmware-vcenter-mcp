@@ -1,0 +1,17 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/draft/mcp.json",
+  "mcpServers": {
+    "vmware": {
+      "command": "node",
+      "args": ["dist/index.js"],
+      "env": {
+        "VCENTER_HOST": "vcsa.example.local",
+        "VCENTER_USER": "administrator@vsphere.local",
+        "VCENTER_PASS": "********",
+        "VCENTER_INSECURE": "false",
+        "VCENTER_READ_ONLY": "true",
+        "VCENTER_LOG_LEVEL": "info"
+      }
+    }
+  }
+}
