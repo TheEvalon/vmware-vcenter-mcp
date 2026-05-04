@@ -78,37 +78,127 @@ $env:VCENTER_INTEGRATION = "true"; npm run test:integration
 
 ---
 
-## Cursor MCP registration
+## Integrating with Cursor
 
-Add this entry to `~/.cursor/mcp.json` (Windows:
-`%USERPROFILE%\.cursor\mcp.json`). Replace `<absolute-path-to-clone>` with
-the absolute path to your cloned repo:
+This MCP server uses the standard stdio transport and registers with
+Cursor the same way any MCP server does: a single entry in your
+`mcp.json`. Five steps end-to-end:
+
+### 1. Prerequisites
+
+- Node.js >= 22 on PATH (`node --version`).
+- This repo cloned and built once -- see [Quick start](#quick-start). The
+  important output is `dist/index.js`.
+- Cursor 0.42 or newer. Older Cursor builds support MCP but use a
+  different config schema.
+- vCenter credentials handy (`VCENTER_HOST`, `VCENTER_USER`,
+  `VCENTER_PASS`).
+
+### 2. Get the absolute path to `dist/index.js`
+
+Cursor launches the MCP server itself, so it needs an absolute path -- a
+relative path will silently fail to start. From inside your clone:
+
+```powershell
+# Windows (PowerShell)
+(Resolve-Path .\dist\index.js).Path
+```
+
+```bash
+# macOS / Linux
+realpath dist/index.js
+```
+
+Copy the printed path; you'll paste it into `args` below.
+
+### 3. Edit your Cursor MCP config
+
+Cursor reads MCP servers from one of two locations. Either works -- the
+project-scoped one is recommended if you want the MCP available only
+inside specific Cursor workspaces.
+
+| Scope         | File                                             |
+|---------------|--------------------------------------------------|
+| Global        | `~/.cursor/mcp.json` (macOS/Linux)               |
+| Global        | `%USERPROFILE%\.cursor\mcp.json` (Windows)       |
+| Project-only  | `<your-project>/.cursor/mcp.json`                |
+
+Open the file (create it if missing) and add the `vmware` entry:
 
 ```json
 {
   "mcpServers": {
     "vmware": {
       "command": "node",
-      "args": ["<absolute-path-to-clone>/dist/index.js"],
+      "args": ["<absolute-path-from-step-2>/dist/index.js"],
       "env": {
         "VCENTER_HOST": "vcsa.lab.local",
         "VCENTER_USER": "administrator@vsphere.local",
         "VCENTER_PASS": "********",
         "VCENTER_INSECURE": "false",
-        "VCENTER_READ_ONLY": "true"
+        "VCENTER_READ_ONLY": "true",
+        "VCENTER_LOG_LEVEL": "info"
       }
     }
   }
 }
 ```
 
-`VCENTER_READ_ONLY=true` is the recommended starting point: every
-destructive tool is blocked globally until you explicitly remove the flag.
-See [Safety / dry-run](#safety--dry-run) below.
+Notes on the snippet:
 
-For development, swap `command: "node", args: ["dist/index.js"]` for
-`command: "npx", args: ["tsx", "src/index.ts"]` and point `cwd` (added by
-Cursor automatically) at the repo.
+- `VCENTER_READ_ONLY=true` is the **recommended starting point**. Every
+  destructive tool is blocked globally until you explicitly flip it to
+  `false`. See [Safety / dry-run](#safety--dry-run).
+- `VCENTER_INSECURE` should stay `false` in production. Set it to `true`
+  only for homelabs with self-signed certs.
+- If you already have other MCP servers in `mcp.json`, just add the
+  `"vmware"` key alongside them inside the existing `"mcpServers"`
+  object -- don't replace the file.
+- On Windows, write the path with **forward slashes** or
+  **double-escaped backslashes** in JSON:
+  `"D:/Repos/vmware-vcenter-mcp/dist/index.js"` or
+  `"D:\\Repos\\vmware-vcenter-mcp\\dist\\index.js"`.
+
+### 4. Reload Cursor and verify the server is up
+
+1. Quit Cursor fully (don't just close the window).
+2. Reopen Cursor.
+3. Open **Settings -> MCP** (or Cmd/Ctrl+Shift+J -> "MCP"). You should
+   see a `vmware` entry with a green dot. The tools list should show
+   100+ entries (`vm_list`, `snapshot_create`, `host_enterMaintenance`,
+   etc.) once the server has finished registering.
+4. If the dot is red, click it to view the stderr log -- the most
+   common cause is a wrong absolute path or unreachable
+   `VCENTER_HOST`. See [Troubleshooting](#troubleshooting) below.
+
+### 5. Try it from a Cursor chat
+
+Open a new chat in any project and ask, for example:
+
+> "List the VMs in my vCenter and show their power state."
+
+> "Take a snapshot of `vm-101` named `pre-upgrade`. Use dry-run first,
+> then ask me before applying."
+
+> "Show DRS recommendations for cluster `cl-prod-01`."
+
+Cursor will pick the right tool from the catalog automatically. Because
+`VCENTER_READ_ONLY=true` is set, any destructive ask will be answered
+with a structured dry-run preview rather than a real change -- exactly
+what you want for the first session.
+
+### Development variant (run from source via `tsx`)
+
+If you're hacking on this MCP and want changes to take effect without a
+rebuild, swap the `command`/`args` for:
+
+```json
+"command": "npx",
+"args": ["tsx", "<absolute-path-to-clone>/src/index.ts"]
+```
+
+Cursor restarts the MCP on every config save, so a Cursor reload picks
+up the new source.
 
 ---
 
